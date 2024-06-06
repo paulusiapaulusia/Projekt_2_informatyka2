@@ -26,6 +26,14 @@ import os
 from qgis.core import QgsPointXY
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
+import os
+from qgis.PyQt import uic
+from qgis.PyQt import QtWidgets
+from qgis.core import QgsMessageLog, Qgis
+import numpy as np
+import os
+from qgis.core import QgsProject, QgsPointXY
+from qgis.utils import iface
 
 # This loads your .ui file so that PyQt can populate your plugin with the elements from Qt Designer
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -54,21 +62,32 @@ class geo_calculationsDialog(QtWidgets.QDialog, FORM_CLASS):
         self.label_dh_result.setText(f'{dh} m')
 
     def calculate_pole(self):
-        selected_layer = self.mMapLayerComboBox.currentLayer()
-        features = selected_layer.selectedFeatures()
+        selected_layer=self.mMapLayerComboBox.currentLayer()
+        obiekty = selected_layer.selectedFeatures()
         punkty = []
-        for o in features:
+        for o in obiekty:
             x = float(o.geometry().asPoint().x())
             y = float(o.geometry().asPoint().y())
             p = QgsPointXY(x, y)
             punkty.append(p)
-
-        pole = 0
-        dl = len(punkty)
-        for e in range(dl):
-            a = (e + 1) % dl
-            pole += (punkty[a].x() + punkty[e].x()) * (punkty[a].y() - punkty[e].y())
             
-        pole = abs(pole) / 2 / 10000  # dzielenie po zakończeniu pętli i zamiana na hektary
-        pole = round(pole, 3)
-        self.label_pole.setText(f'{pole} ha')
+        if len(obiekty)<3:
+            iface.messageBar().pushMessage("Pole powierzchni", 'Aby policzyć pole powierzchni wybierz co najmniej TRZY PUNKTY', level = Qgis.Warning)
+            return
+            
+        if len(obiekty)>2:
+
+            pole = 0
+            dl = len(punkty)
+            for e in range(dl):
+                a = (e + 1) % dl
+                pole += (punkty[a].x() + punkty[e].x()) * (punkty[a].y() - punkty[e].y())
+
+            pole /= 2
+            pole = round(abs(pole/10000), 3)
+            
+            pole = self.label_pole.setText(str(pole) +'ha')
+
+            QgsMessageLog.logMessage(f'Pole powierzchni między wybranymi punktami wynosi: {pole} ha', level=Qgis.Success)
+
+            iface.messageBar().pushMessage("Pole powierzchni", f'Pole powierzchni między wybranymi punktami wynosi: {pole} ha', level=Qgis.Success)
