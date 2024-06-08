@@ -55,11 +55,22 @@ class geo_calculationsDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def calculate_dh(self):
         selected_layer=self.mMapLayerComboBox.currentLayer()
+        if selected_layer is None:
+            iface.messageBar().pushMessage("Różnica wysokosci", 'Nie wybrano aktywnej warstwy', level = Qgis.Warning)
+            return
+        
         features=selected_layer.selectedFeatures()
-        h_1=float(features[1]['wysokosc'])
-        h_2=float(features[2]['wysokosc'])
+        if len(features) != 2:
+            iface.messageBar().pushMessage("Różnica wysokosci", 'Aby policzyć wysokosc wybierz DWA PUNKTY', level = Qgis.Warning)
+            return
+        
+        h_1=float(features[0]['wysokosc'])
+        h_2=float(features[1]['wysokosc'])
         dh=h_2-h_1
         self.label_dh_result.setText(f'{dh} m')
+        QgsMessageLog.logMessage('Różnica wysokości między wybranymi punktami wynosi:' +str(dh) +'m', level = Qgis.Success)
+        
+        iface.messageBar().pushMessage("Różnica wysokosci", 'Różnica wysokości między wybranymi punktami została policzona', level = Qgis.Success)
 
     def calculate_pole(self):
         selected_layer=self.mMapLayerComboBox.currentLayer()
