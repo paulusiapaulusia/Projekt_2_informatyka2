@@ -39,7 +39,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Oblicz różnice wysokości</string>
+    <string>Oblicz przewyższenie</string>
    </property>
   </widget>
   <widget class="QPushButton" name="PushButton_pole">
