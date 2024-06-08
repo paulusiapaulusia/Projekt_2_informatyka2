@@ -26,12 +26,8 @@ import os
 from qgis.core import QgsPointXY
 from qgis.PyQt import uic
 from qgis.PyQt import QtWidgets
-import os
-from qgis.PyQt import uic
-from qgis.PyQt import QtWidgets
 from qgis.core import QgsMessageLog, Qgis
 import numpy as np
-import os
 from qgis.core import QgsProject, QgsPointXY
 from qgis.utils import iface
 
