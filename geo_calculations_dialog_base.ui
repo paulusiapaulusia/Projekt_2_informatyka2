@@ -78,7 +78,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_wysokosc">
+  <widget class="QLabel" name="label_dh_result">
    <property name="geometry">
     <rect>
      <x>490</x>
